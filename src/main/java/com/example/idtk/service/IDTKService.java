@@ -249,10 +249,8 @@ public class IDTKService {
         return device;
     }
 
-    //private String
-
     //==========================校验设备是否失去焦点========================
-    public boolean checkFocus(List<DataStatistic> dataStatistics, float threshold){
+    private boolean checkFocus(List<DataStatistic> dataStatistics, float threshold){
         if(threshold > 1f){
             threshold = 1f;
         } else if(threshold < 0f){

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org.dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.idtk.dao.DataStatisticDao">
+    <resultMap id="DataStatistic" type="com.example.idtk.domain.DataStatistic">
+        <result column="id" property="id" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="version" property="version" jdbcType="VARCHAR" javaType="String"/>
+        <result column="device_sn" property="deviceSn" jdbcType="VARCHAR" javaType="String"/>
+        <result column="ir_voltage" property="irVoltage" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="counter_voltage" property="counterVoltage" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="data_time" property="dataTime" jdbcType="DATE" javaType="java.util.Date"/>
+        <result column="focus" property="focus" jdbcType="INTEGER" javaType="boolean"/>
+        <result column="entry" property="entry" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="exit" property="exit" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="deleted" property="deleted" jdbcType="INTEGER" javaType="boolean"/>
+    </resultMap>
+
+    <insert id="addBatch" parameterType="java.util.List">
+        insert into data_statistic
+        (version, device_sn, ir_voltage, counter_voltage, data_time, focus, entry, `exit`, deleted)
+        values
+        <foreach collection ="list" item="item" index= "index" separator =",">
+            (#{item.version}, #{item.deviceSn}, #{item.irVoltage}, #{item.counterVoltage}, #{item.dataTime}, #{item.focus}, #{item.entry}, #{item.exit}, #{item.deleted})
+        </foreach >
+    </insert>
+</mapper>

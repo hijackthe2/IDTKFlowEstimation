@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org.dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.idtk.dao.DeviceInfoDao">
+    <resultMap id="DeviceInfo" type="com.example.idtk.domain.DeviceInfo">
+        <result column="sn" property="sn" jdbcType="VARCHAR" javaType="String"/>
+        <result column="command_type" property="commandType" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="speed" property="speed" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="recording_cycle" property="recordingCycle" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="upload_cycle" property="uploadCycle" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="fixed_upload_time" property="fixedUploadTime" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="upload_time1" property="uploadTime1" jdbcType="TIME" javaType="java.sql.Time"/>
+        <result column="upload_time2" property="uploadTime2" jdbcType="TIME" javaType="java.sql.Time"/>
+        <result column="upload_time3" property="uploadTime3" jdbcType="TIME" javaType="java.sql.Time"/>
+        <result column="upload_time4" property="uploadTime4" jdbcType="TIME" javaType="java.sql.Time"/>
+        <result column="mode" property="mode" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="display_type" property="displayType" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="mac1" property="mac1" jdbcType="VARCHAR" javaType="String"/>
+        <result column="mac2" property="mac2" jdbcType="VARCHAR" javaType="String"/>
+        <result column="mac3" property="mac3" jdbcType="VARCHAR" javaType="String"/>
+        <result column="open_time" property="openTime" jdbcType="TIME" javaType="java.sql.Time"/>
+        <result column="close_time" property="closeTime" jdbcType="TIME" javaType="java.sql.Time"/>
+        <result column="latest_receive_time" property="latestReceiveTime" jdbcType="DATE" javaType="java.util.Date"/>
+        <result column="latest_update_time" property="latestUpdateTime" jdbcType="DATE" javaType="java.util.Date"/>
+        <result column="focus" property="focus" jdbcType="INTEGER" javaType="boolean"/>
+        <result column="deleted" property="deleted" jdbcType="INTEGER" javaType="boolean"/>
+        <result column="ir_voltage" property="irVoltage" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="counter_voltage" property="counterVoltage" jdbcType="INTEGER" javaType="Integer"/>
+    </resultMap>
+
+    <select id="findDeviceInfoBySn" resultMap="DeviceInfo" parameterType="String">
+        select * from device_info where sn = #{sn}
+    </select>
+
+    <update id="save" parameterType="DeviceInfo">
+        update device_info set
+        command_type = #{commandType}, speed = #{speed},
+        recording_cycle = #{recordingCycle}, upload_cycle = #{uploadCycle},
+        fixed_upload_time = #{fixedUploadTime},
+        upload_time1 = #{uploadTime1}, upload_time2 = #{uploadTime2}, upload_time3 = #{uploadTime3}, upload_time4 = #{uploadTime4},
+        `mode` = #{mode}, display_type = #{displayType},
+        mac1 = #{mac1}, mac2 = #{mac2}, mac3 = #{mac3},
+        open_time = #{openTime}, close_time = #{closeTime},
+        latest_receive_time = #{latestReceiveTime}, latest_update_time = #{latestUpdateTime},
+        focus = #{focus}, ir_voltage = #{irVoltage}, counter_voltage = #{counterVoltage}
+        where sn = #{sn}
+    </update>
+</mapper>

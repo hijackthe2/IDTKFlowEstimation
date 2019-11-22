@@ -1,10 +1,12 @@
 package com.example.idtk.service;
 
-import com.example.idtk.dao.DataStatisticDao;
-import com.example.idtk.dao.DeviceInfoDao;
+//import com.example.idtk.dao.DataStatisticDao;
+//import com.example.idtk.dao.DeviceInfoDao;
 import com.example.idtk.domain.DataStatistic;
 import com.example.idtk.domain.DeviceInfo;
 import com.example.idtk.model.ReceiveModel;
+import com.example.idtk.repository.DataStatisticRepository;
+import com.example.idtk.repository.DeviceInfoRepository;
 import com.example.idtk.util.Crc16Utils;
 import com.example.idtk.util.DateUtils;
 import com.example.idtk.util.StringUtils;
@@ -31,11 +33,16 @@ public class IDTKService {
     private static final Time OPEN_TIME = DateUtils.parseTime("0800", "HHmm");//8:00
     private static final Time CLOSE_TIME = DateUtils.parseTime("2230", "HHmm");//22:30
 
-    @Autowired
-    private DeviceInfoDao deviceInfoDao;
+//    @Autowired
+//    private DeviceInfoDao deviceInfoDao;
+//
+//    @Autowired
+//    private DataStatisticDao dataStatisticDao;
 
     @Autowired
-    private DataStatisticDao dataStatisticDao;
+    private DeviceInfoRepository deviceInfoRepository;
+    @Autowired
+    private DataStatisticRepository dataStatisticRepository;
 
     @Transactional
     public String receiveData(ReceiveModel model) {
@@ -112,16 +119,19 @@ public class IDTKService {
             logger.warn("~~上传数据失败~~");
             result.append("00").append(StringUtils.reverseInWord(flag)).append(StringUtils.format("", 24));
         } else{
-            dataStatisticDao.addBatch(dataStatistics);
+//            dataStatisticDao.addBatch(dataStatistics);
+            dataStatisticRepository.saveAll(dataStatistics);
 
             DataStatistic latestStatistic = dataStatistics.get(dataStatistics.size() - 1);
-            DeviceInfo deviceInfo = deviceInfoDao.findDeviceInfoBySn(latestStatistic.getDeviceSn());
+//            DeviceInfo deviceInfo = deviceInfoDao.findDeviceInfoBySn(latestStatistic.getDeviceSn());
+            DeviceInfo deviceInfo = deviceInfoRepository.findFirstBySnAndDeleted(latestStatistic.getDeviceSn(), false);
             deviceInfo.setFocus(checkFocus(dataStatistics, 0.5f));
             deviceInfo.setLatestUpdateTime(new Date());
             deviceInfo.setCounterVoltage(latestStatistic.getCounterVoltage());
             deviceInfo.setIrVoltage(latestStatistic.getIrVoltage());
             deviceInfo.setLatestReceiveTime(latestStatistic.getDataTime());
-            deviceInfoDao.save(deviceInfo);
+//            deviceInfoDao.save(deviceInfo);
+            deviceInfoRepository.save(deviceInfo);
 
             result.append("01"); //上传成功， 00表示失败
             result.append(StringUtils.reverseInWord(flag));
@@ -234,7 +244,8 @@ public class IDTKService {
     }
 
     private DeviceInfo saveDeviceInfo(String sn, DeviceInfo dataInfo){
-        DeviceInfo device = deviceInfoDao.findDeviceInfoBySn(sn);
+//        DeviceInfo device = deviceInfoDao.findDeviceInfoBySn(sn);
+        DeviceInfo device = deviceInfoRepository.findFirstBySnAndDeleted(sn, false);
         if(device == null){
             return null;
         }
@@ -256,7 +267,8 @@ public class IDTKService {
         device.setOpenTime(device.getOpenTime() == null ? OPEN_TIME : device.getOpenTime());
         device.setCloseTime(device.getCloseTime() == null ? CLOSE_TIME : device.getCloseTime());
         device.setLatestUpdateTime(new Date());
-        deviceInfoDao.save(device);
+//        deviceInfoDao.save(device);
+        deviceInfoRepository.save(device);
         return device;
     }
 

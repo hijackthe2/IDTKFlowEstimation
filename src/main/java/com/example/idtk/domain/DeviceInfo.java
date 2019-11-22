@@ -1,5 +1,6 @@
 package com.example.idtk.domain;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Time;
 import java.util.Date;
@@ -7,48 +8,81 @@ import java.util.Date;
 /**
  * 数字类型数据均为10进制
  */
+@Entity
+@Table(name = "device_info")
 public class DeviceInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /** idtk计数器设备号 */
+    @Id
+    @Column(length = 16)
     private String sn;
+
     /** 0x00  不包含校验时间与营业时间;0x01  包含校验系统时间;0x02  包含校验营业时间;0x03  包含校验系统时间与营业时间 */
+    @Column(length = 2)
     private Integer commandType;
+
     /** 设备探测速度 0x00 低速，0x01 是高速 */
+    @Column(length = 1)
     private Integer speed;
+
     /** 记录周期的分钟数 0-255 */
+    @Column(length = 8)
     private Integer recordingCycle;
+
     /** 上传周期 0-255 0表示实时上传 */
+    @Column(length = 8)
     private Integer uploadCycle;
+
     /** 指定上传时间  0不指定 1-4依次指定*/
+    @Column(length = 3)
     private Integer fixedUploadTime;
     private Time uploadTime1;
     private Time uploadTime2;
     private Time uploadTime3;
     private Time uploadTime4;
+
     /** 运行模式 00联网模式01单机模式 */
+    @Column(length = 1, name = "running_mode")
     private Integer mode;
+
     /** 显示类型 00计数不在幕上显示;01显示总数;02显示双向 */
+    @Column(length = 2)
     private Integer displayType;
+    @Column(length = 32)
     private String mac1;
+    @Column(length = 32)
     private String mac2;
+    @Column(length = 32)
     private String mac3;
+
     /** 开店时间 时分 */
     private Time openTime;
+
     /** 关店时间 时分 */
     private Time closeTime;
+
     /** 最新的接受数据时间 */
     private Date latestReceiveTime;
+
     /** 最新的修改信息时间 */
     private Date latestUpdateTime;
+
     /** 对焦状态 0正常 1失焦 */
+    @Column(length = 1)
     private boolean focus;
+
     /** 发射器剩余电量 */
+    @Column(length = 7)
     private Integer irVoltage;
+
     /** 计数器剩余电量 */
+    @Column(length = 7)
     private Integer counterVoltage;
+
     /** 删除状态 0未删除 1删除 */
+    @Column(length = 1)
     private boolean deleted = false;
 
     public static long getSerialVersionUID() {

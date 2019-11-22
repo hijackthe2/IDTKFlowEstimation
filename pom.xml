@@ -39,6 +39,12 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+		<!--data jpa-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<!--mysql-->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -60,25 +66,25 @@
 			<artifactId>commons-logging</artifactId>
 			<version>1.2</version>
 		</dependency>
-
+		<!--log4j-->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
 		</dependency>
-
+		<!--httpclient-->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
 			<version>4.5.10</version>
 		</dependency>
-
+		<!--okhttp-->
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>
 			<artifactId>okhttp</artifactId>
 			<version>3.10.0</version>
 		</dependency>
-
+		<!--fast json-->
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>

@@ -1,31 +1,53 @@
 package com.example.idtk.domain;
 
+import javax.persistence.*;
 import java.util.Date;
 
 /**
  * 数字类型数据均为10进制
  */
+@Entity
+@Table(name = "data_statistic")
 public class DataStatistic {
 
     /** 主键 */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     /** 软件版本号 */
+    @Column(length = 16)
     private String version;
+
     /** 设备sn串号 */
+    @Column(length = 16)
     private String deviceSn;
+
     /** 发射器剩余电量 */
+    @Column(length = 7)
     private Integer irVoltage;
+
     /** 计数器剩余电量 */
+    @Column(length = 7)
     private Integer counterVoltage;
+
     /** 接受数据时间 */
     private Date dataTime;
+
     /** 对焦状态 0正常 1失焦 */
+    @Column(length = 1)
     private boolean focus;
+
     /** 进门数量 */
+    @Column(length = 11, name = "entry_number")
     private Integer entry;
+
     /** 出门数量 */
+    @Column(length = 11, name = "exit_number")
     private Integer exit;
+
     /** 删除状态 0未删除 1删除 */
+    @Column(length = 1)
     private boolean deleted = false;
 
     public DataStatistic(){}

@@ -45,5 +45,5 @@ public class IDTKController {
         logger.info("equal: " + returnLocal.equals(returnRemote));
         return returnRemote;
     }
-    
+
 }

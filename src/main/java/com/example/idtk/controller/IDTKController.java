@@ -42,7 +42,7 @@ public class IDTKController {
 
         logger.info("from remote server: " + returnRemote.toUpperCase());
         logger.info("from local server:  " + returnLocal.toUpperCase());
-        logger.info("equal: " + returnLocal.equals(returnRemote));
+//        logger.info("equal: " + returnLocal.equals(returnRemote));
         return returnRemote;
     }
 

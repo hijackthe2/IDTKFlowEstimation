@@ -44,6 +44,31 @@ public class IDTKService {
     @Autowired
     private DataStatisticRepository dataStatisticRepository;
 
+    /**
+     * 向数据库中添加一个设备
+     * @param sn 设备sn
+     * @return
+     */
+    @Transactional
+    public boolean addDevice(String sn){
+        if(deviceInfoRepository.findFirstBySnAndDeleted(sn, false) != null){
+            logger.warn("~~~设备 " + sn + " 已存在，添加失败~~~");
+            return false;
+        }
+        DeviceInfo deviceInfo = new DeviceInfo();
+        deviceInfo.setSn(sn);
+        deviceInfo.setOpenTime(OPEN_TIME);
+        deviceInfo.setCloseTime(CLOSE_TIME);
+        deviceInfoRepository.save(deviceInfo);
+        logger.info("~~~设备 " + sn + " 添加成功~~~");
+        return true;
+    }
+
+    /**
+     * 解析设备发送到服务器的数据
+     * @param model 接受数据的对象
+     * @return
+     */
     @Transactional
     public String receiveData(ReceiveModel model) {
         logger.info("IDTK receive ====>" + model.toString());
@@ -119,18 +144,21 @@ public class IDTKService {
             logger.warn("~~上传数据失败~~");
             result.append("00").append(StringUtils.reverseInWord(flag)).append(StringUtils.format("", 24));
         } else{
-//            dataStatisticDao.addBatch(dataStatistics);
-            dataStatisticRepository.saveAll(dataStatistics);
-
             DataStatistic latestStatistic = dataStatistics.get(dataStatistics.size() - 1);
 //            DeviceInfo deviceInfo = deviceInfoDao.findDeviceInfoBySn(latestStatistic.getDeviceSn());
             DeviceInfo deviceInfo = deviceInfoRepository.findFirstBySnAndDeleted(latestStatistic.getDeviceSn(), false);
+            if(deviceInfo == null){
+                logger.warn("~~~设备 " + latestStatistic.getDeviceSn() + " 不存在~~~");
+                return "00";
+            }
             deviceInfo.setFocus(checkFocus(dataStatistics, 0.5f));
             deviceInfo.setLatestUpdateTime(new Date());
             deviceInfo.setCounterVoltage(latestStatistic.getCounterVoltage());
             deviceInfo.setIrVoltage(latestStatistic.getIrVoltage());
             deviceInfo.setLatestReceiveTime(latestStatistic.getDataTime());
 //            deviceInfoDao.save(deviceInfo);
+//            dataStatisticDao.addBatch(dataStatistics);
+            dataStatisticRepository.saveAll(dataStatistics);
             deviceInfoRepository.save(deviceInfo);
 
             result.append("01"); //上传成功， 00表示失败

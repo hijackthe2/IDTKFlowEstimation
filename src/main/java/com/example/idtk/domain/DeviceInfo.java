@@ -70,7 +70,7 @@ public class DeviceInfo implements Serializable {
     private Date latestUpdateTime;
 
     /** 对焦状态 0正常 1失焦 */
-    @Column(length = 1)
+    @Column(length = 1, columnDefinition = "tinyint default 0")
     private boolean focus;
 
     /** 发射器剩余电量 */
@@ -82,7 +82,7 @@ public class DeviceInfo implements Serializable {
     private Integer counterVoltage;
 
     /** 删除状态 0未删除 1删除 */
-    @Column(length = 1)
+    @Column(length = 1, columnDefinition = "tinyint default 0")
     private boolean deleted = false;
 
     public static long getSerialVersionUID() {

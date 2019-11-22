@@ -35,7 +35,7 @@ public class DataStatistic {
     private Date dataTime;
 
     /** 对焦状态 0正常 1失焦 */
-    @Column(length = 1)
+    @Column(length = 1, columnDefinition = "tinyint default 0")
     private boolean focus;
 
     /** 进门数量 */
@@ -47,7 +47,7 @@ public class DataStatistic {
     private Integer exit;
 
     /** 删除状态 0未删除 1删除 */
-    @Column(length = 1)
+    @Column(length = 1, columnDefinition = "tinyint default 0")
     private boolean deleted = false;
 
     public DataStatistic(){}

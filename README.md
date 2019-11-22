@@ -1,5 +1,5 @@
 # IDTKFlowEstimation
-IDTK客流统计
+IDTK客流统计（添加设备时，须在数据库中先添加设备sn等必要信息）
 
 项目框架：Spring Boot + Maven
 

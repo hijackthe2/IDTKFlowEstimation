@@ -42,7 +42,7 @@ public class DateUtils {
         return StringUtils.format(Integer.toHexString(calendar.get(Calendar.YEAR) - 2000), 2) +
                 StringUtils.format(Integer.toHexString(calendar.get(Calendar.MONTH)), 2) +
                 StringUtils.format(Integer.toHexString(calendar.get(Calendar.DATE)), 2) +
-                StringUtils.format(Integer.toHexString(calendar.get(Calendar.HOUR)), 2) +
+                StringUtils.format(Integer.toHexString(calendar.get(Calendar.HOUR_OF_DAY)), 2) +
                 StringUtils.format(Integer.toHexString(calendar.get(Calendar.MINUTE)), 2) +
                 StringUtils.format(Integer.toHexString(calendar.get(Calendar.SECOND)), 2);
     }
@@ -52,7 +52,7 @@ public class DateUtils {
         Date date = new Date();
         date.setTime(time.getTime());
         calendar.setTime(date);
-        return StringUtils.format(Integer.toHexString(calendar.get(Calendar.HOUR)), 2) +
+        return StringUtils.format(Integer.toHexString(calendar.get(Calendar.HOUR_OF_DAY)), 2) +
                 StringUtils.format(Integer.toHexString(calendar.get(Calendar.MINUTE)), 2);
     }
 

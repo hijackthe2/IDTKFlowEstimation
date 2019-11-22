@@ -2,19 +2,13 @@ package com.example.idtk.controller;
 
 import com.example.idtk.model.ReceiveModel;
 import com.example.idtk.service.IDTKService;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  * 面向设备终端的接口
@@ -34,7 +28,7 @@ public class IDTKController {
     @RequestMapping(value = "/receive", method = RequestMethod.POST)
     public String receive(HttpServletRequest request) {
 
-        String returnRemote = transferToServer(request);
+        String returnRemote = idtkService.transferToServer(request, idtkUrl);
 
         ReceiveModel model = new ReceiveModel();
         model.setCmd(request.getParameter("cmd"));
@@ -46,41 +40,10 @@ public class IDTKController {
 
         String returnLocal = idtkService.receiveData(model);
 
-        logger.info("from remote server: " + returnRemote);
-        logger.info("from local server: " + returnLocal);
+        logger.info("from remote server: " + returnRemote.toUpperCase());
+        logger.info("from local server:  " + returnLocal.toUpperCase());
         logger.info("equal: " + returnLocal.equals(returnRemote));
         return returnRemote;
     }
-
-    public String transferToServer(HttpServletRequest request){
-        FormBody.Builder builder = new FormBody.Builder();
-
-//        builder.add("cmd", request.getParameter("cmd"));
-//        builder.add("flag", request.getParameter("flag"));
-//        builder.add("status", request.getParameter("status"));
-//        builder.add("data", Arrays.toString(request.getParameterValues("data")));
-//        builder.add("count", request.getParameter("count"));
-
-        Map<String, String[]> map = request.getParameterMap();
-        for(Map.Entry<String, String[]> m : map.entrySet()){
-            builder.add(m.getKey(), Arrays.toString(m.getValue()));
-        }
-
-        OkHttpClient okHttpClient = new OkHttpClient();
-        FormBody formBody = builder.build();
-        Request req = new Request.Builder()
-                .url(idtkUrl)
-                .post(formBody)
-                .build();
-        String responseBody = null;
-        try (Response response = okHttpClient.newCall(req).execute()) {
-            if (response.body() != null) {
-                responseBody = response.body().string();
-            }
-            return "result=" + responseBody;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "result=" + "00";
-    }
+    
 }

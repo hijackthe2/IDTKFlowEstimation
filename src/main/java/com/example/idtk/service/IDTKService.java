@@ -8,18 +8,21 @@ import com.example.idtk.model.ReceiveModel;
 import com.example.idtk.util.Crc16Utils;
 import com.example.idtk.util.DateUtils;
 import com.example.idtk.util.StringUtils;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.sql.Time;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class IDTKService {
@@ -94,15 +97,16 @@ public class IDTKService {
             }
             DataStatistic statistic = dataStatistic.copy();
             //上传时间
-            dataStatistic.setDataTime(DateUtils.parseDate(StringUtils.parseHexStringToDecStringInWord(data.substring(0, 12)),
+            statistic.setDataTime(DateUtils.parseDate(StringUtils.parseHexStringToDecStringInWord(data.substring(0, 12)),
                     "yyMMddHHmmss"));
             //boolean focus = Integer.decode("0x" + data.substring(12, 14)) == 0;
-            dataStatistic.setFocus(Integer.decode("0x" + data.substring(12, 14)) == 0);
+            statistic.setFocus(Integer.decode("0x" + data.substring(12, 14)) == 0);
             //进增量
-            dataStatistic.setEntry(Integer.decode("0x" + StringUtils.reverseInWord(data.substring(14,22))));
+            statistic.setEntry(Integer.decode("0x" + StringUtils.reverseInWord(data.substring(14,22))));
             //出增量
-            dataStatistic.setExit(Integer.decode("0x" + StringUtils.reverseInWord(data.substring(22,28))));
+            statistic.setExit(Integer.decode("0x" + StringUtils.reverseInWord(data.substring(22,28))));
             dataStatistics.add(statistic);
+            logger.info("device " + statistic.getDeviceSn() + ": entry=" + statistic.getEntry() + "; exit=" + statistic.getExit());
         }
         if(!enable){
             logger.warn("~~上传数据失败~~");
@@ -121,6 +125,7 @@ public class IDTKService {
 
             result.append("01"); //上传成功， 00表示失败
             result.append(StringUtils.reverseInWord(flag));
+            result.append(StringUtils.format(Integer.toHexString(deviceInfo.getCommandType()), 2));
             LocalDateTime now = LocalDateTime.now();
             result.append(DateUtils.toHexString(now));
             result.append(StringUtils.format(Integer.toHexString(now.getDayOfWeek().getValue()), 2));
@@ -176,8 +181,8 @@ public class IDTKService {
         } else{
             sb.append("04"); //参数新值
         }
-        sb.append(StringUtils.reverseInWord(flag));
-        sb.append(StringUtils.format("", 8));
+        sb.append(flag);
+        sb.append(StringUtils.reverseInWord(device.getSn()));
         sb.append("03"); //command type
         sb.append(StringUtils.format(Integer.toHexString(device.getSpeed()), 2)); //speed
         sb.append(StringUtils.format(Integer.toHexString(device.getRecordingCycle()), 2));
@@ -197,6 +202,35 @@ public class IDTKService {
         sb.append(crcStr);
         logger.info("~~~~ return ~~~~ : " + sb.toString().toUpperCase());
         return sb.toString().toUpperCase();
+    }
+
+    public String transferToServer(HttpServletRequest request, String serverUrl){
+        FormBody.Builder builder = new FormBody.Builder();
+
+        Map<String, String[]> map = request.getParameterMap();
+        for(Map.Entry<String, String[]> m : map.entrySet()){
+            String[] valueArr = m.getValue();
+            for(String value : valueArr){
+                builder.add(m.getKey(), value);
+                logger.info(m.getKey() + "=" + value);
+            }
+        }
+        OkHttpClient okHttpClient = new OkHttpClient();
+        FormBody formBody = builder.build();
+        Request req = new Request.Builder()
+                .url(serverUrl)
+                .post(formBody)
+                .build();
+        String responseBody = null;
+        try (Response response = okHttpClient.newCall(req).execute()) {
+            if (response.body() != null) {
+                responseBody = response.body().string();
+            }
+            return responseBody;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "result=" + "00";
     }
 
     private DeviceInfo saveDeviceInfo(String sn, DeviceInfo dataInfo){

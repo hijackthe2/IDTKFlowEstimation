@@ -33,12 +33,6 @@ public class IDTKService {
     private static final Time OPEN_TIME = DateUtils.parseTime("0800", "HHmm");//8:00
     private static final Time CLOSE_TIME = DateUtils.parseTime("2230", "HHmm");//22:30
 
-//    @Autowired
-//    private DeviceInfoDao deviceInfoDao;
-//
-//    @Autowired
-//    private DataStatisticDao dataStatisticDao;
-
     @Autowired
     private DeviceInfoRepository deviceInfoRepository;
     @Autowired
@@ -47,7 +41,6 @@ public class IDTKService {
     /**
      * 向数据库中添加一个设备
      * @param sn 设备sn
-     * @return
      */
     @Transactional
     public boolean addDevice(String sn){
@@ -67,7 +60,6 @@ public class IDTKService {
     /**
      * 解析设备发送到服务器的数据
      * @param model 接受数据的对象
-     * @return
      */
     @Transactional
     public String receiveData(ReceiveModel model) {
